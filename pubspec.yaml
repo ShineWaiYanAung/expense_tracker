@@ -60,6 +60,7 @@ dev_dependencies:
   flutter_slidable: ^4.0.0
   side_menu_animation:
   draggable_button_panel: ^1.0.0-dev.2
+  fl_chart: ^0.63.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
