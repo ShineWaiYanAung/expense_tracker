@@ -1,8 +1,11 @@
 import 'package:expense_tracker/features/presentation/bloc/color_state_mangaement/color_bloc.dart';
+import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_button_panel/draggable_button_panel.dart';
+import '../../../domain/entity/expense_article.dart';
 import '../../bloc/color_state_mangaement/color_event.dart';
 import '../../bloc/color_state_mangaement/color_state.dart';
+import '../../bloc/local_bloc_statement/local_expense_state.dart';
 import '../../widget/cardButton/widget_card_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../config/theme/theme.dart';
@@ -16,7 +19,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
-  bool showPanel = true;
+  bool showPanel = false;
   final GlobalKey<DraggableButtonPanelState> _draggableButtonPanelKey =
       GlobalKey<DraggableButtonPanelState>();
 
@@ -36,6 +39,47 @@ class _DashBoardState extends State<DashBoard> {
                   buildTopBar(context),
                   SizedBox(height: 40),
                   buildDataShowCard(context),
+                  SizedBox(height: 30),
+                  buildSecondBar(),
+                  Expanded(
+                    child: BlocBuilder<LocalExpenseBloc, LocalExpenseState>(
+                      builder: (context, state) {
+                        List<ExpenseArticle>? dataState = state.expense;
+                        if (state is LocalExpenseLoading) {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).cardColor,
+                            ),
+                          );
+                        }
+                        if (state is LocalExpenseDone) {
+                          print("YouData");
+                          if (dataState!.isEmpty) {
+                            return Center(
+                              child: Text(
+                                "No Data",
+                                style: TextStyle(
+                                  color: Theme.of(context).cardColor,
+                                  fontSize:
+                                      Theme.of(
+                                        context,
+                                      ).textTheme.titleMedium!.fontSize,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return ListView.builder(
+                              itemCount: dataState.length,
+                              itemBuilder: (context, index) {
+                                return ListTile();
+                              },
+                            );
+                          }
+                        }
+                        return SizedBox();
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -89,37 +133,66 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
+  Row buildSecondBar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          "Recent",
+          style: TextStyle(
+            color: Theme.of(context).cardColor,
+            fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Text(
+            "Category",
+            style: TextStyle(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Container buildDataShowCard(BuildContext context) {
     return Container(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      //PercentageChartHere
-                      CircleAvatar(
-                        radius: 80,
-                        backgroundColor: Colors.white,
-                        child: ExpensePieChart(),
-                      ),
-                      //CardDataHere
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          buildTextLabel(context, "Total Expenses"),
-                          buildExpenseResult(context, "  \$1000"),
-                          buildTextLabel(context, "Last Month"),
-                          buildExpenseResult(context, "  \$1000"),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
+      padding: EdgeInsets.symmetric(vertical: 20),
+      height: 200,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          //PercentageChartHere
+          CircleAvatar(
+            radius: 80,
+            backgroundColor: Colors.white,
+            child: ExpensePieChart(),
+          ),
+          //CardDataHere
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              buildTextLabel(context, "Total Expenses"),
+              buildExpenseResult(context, "  \$1000"),
+              buildTextLabel(context, "Last Month"),
+              buildExpenseResult(context, "  \$1000"),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   //ExpenseResultHere

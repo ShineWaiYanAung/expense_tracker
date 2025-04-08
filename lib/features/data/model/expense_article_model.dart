@@ -5,6 +5,7 @@ import 'package:floor/floor.dart';
 @TypeConverters([DateTimeConverter])
 class ExpenseArticleModel extends ExpenseArticle {
   ExpenseArticleModel({
+    required super.expenseType,
     required super.time,
     required super.name,
     required super.cost,
@@ -15,6 +16,7 @@ class ExpenseArticleModel extends ExpenseArticle {
 
   factory ExpenseArticleModel.fromEntity(ExpenseArticle entity) {
     return ExpenseArticleModel(
+      expenseType: entity.expenseType,
       time: entity.dateTime,
       name: entity.name,
       cost: entity.cost,

@@ -96,7 +96,7 @@ class _$AppDataBase extends AppDataBase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `expense` (`id` INTEGER, `name` TEXT NOT NULL, `cost` REAL NOT NULL, `currencyName` TEXT NOT NULL, `quantity` REAL NOT NULL, `netPrice` REAL NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY (`time`))');
+            'CREATE TABLE IF NOT EXISTS `expense` (`expenseType` INTEGER NOT NULL, `id` INTEGER, `name` TEXT NOT NULL, `cost` REAL NOT NULL, `currencyName` TEXT NOT NULL, `quantity` REAL NOT NULL, `netPrice` REAL NOT NULL, `time` INTEGER NOT NULL, PRIMARY KEY (`time`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -119,6 +119,7 @@ class _$ExpenseDao extends ExpenseDao {
             database,
             'expense',
             (ExpenseArticleModel item) => <String, Object?>{
+                  'expenseType': item.expenseType.index,
                   'id': item.id,
                   'name': item.name,
                   'cost': item.cost,
@@ -132,6 +133,7 @@ class _$ExpenseDao extends ExpenseDao {
             'expense',
             ['time'],
             (ExpenseArticleModel item) => <String, Object?>{
+                  'expenseType': item.expenseType.index,
                   'id': item.id,
                   'name': item.name,
                   'cost': item.cost,
@@ -145,6 +147,7 @@ class _$ExpenseDao extends ExpenseDao {
             'expense',
             ['time'],
             (ExpenseArticleModel item) => <String, Object?>{
+                  'expenseType': item.expenseType.index,
                   'id': item.id,
                   'name': item.name,
                   'cost': item.cost,
@@ -172,6 +175,7 @@ class _$ExpenseDao extends ExpenseDao {
   Future<List<ExpenseArticleModel>> getArticle() async {
     return _queryAdapter.queryList('SELECT * FROM expense',
         mapper: (Map<String, Object?> row) => ExpenseArticleModel(
+            expenseType: ExpenseType.values[row['expenseType'] as int],
             time: _dateTimeConverter.decode(row['time'] as int),
             name: row['name'] as String,
             cost: row['cost'] as double,

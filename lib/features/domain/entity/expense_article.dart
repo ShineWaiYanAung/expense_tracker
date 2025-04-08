@@ -1,10 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
-
+enum ExpenseType {
+   Bill,
+   Food,
+   Transport
+}
 @TypeConverters([DateTimeConverter]) // Apply the converter
 @Entity(tableName: 'expenses')
 class ExpenseArticle extends Equatable {
   @PrimaryKey(autoGenerate: true)
+  final ExpenseType expenseType;
   final int? id; // Add ID as a primary key
   final String name;
   final double cost;
@@ -15,7 +20,8 @@ class ExpenseArticle extends Equatable {
   @ColumnInfo(name: 'time')
   final int time; // Store DateTime as int (timestamp)
 
-  ExpenseArticle({
+  ExpenseArticle( {
+    required this.expenseType,
     this.id,
     required DateTime time, // Accept DateTime
     required this.name,
@@ -37,6 +43,7 @@ class ExpenseArticle extends Equatable {
     currencyName,
     quantity,
     netPrice,
+    expenseType
   ];
 }
 
