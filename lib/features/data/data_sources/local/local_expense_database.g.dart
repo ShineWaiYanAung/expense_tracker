@@ -204,3 +204,14 @@ class _$ExpenseDao extends ExpenseDao {
 
 // ignore_for_file: unused_element
 final _dateTimeConverter = DateTimeConverter();
+class DateTimeConverter extends TypeConverter<DateTime, int> {
+  @override
+  DateTime decode(int databaseValue) {
+    return DateTime.fromMillisecondsSinceEpoch(databaseValue);
+  }
+
+  @override
+  int encode(DateTime value) {
+    return value.millisecondsSinceEpoch;
+  }
+}

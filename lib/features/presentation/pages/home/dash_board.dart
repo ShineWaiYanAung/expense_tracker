@@ -41,45 +41,7 @@ class _DashBoardState extends State<DashBoard> {
                   buildDataShowCard(context),
                   SizedBox(height: 30),
                   buildSecondBar(),
-                  Expanded(
-                    child: BlocBuilder<LocalExpenseBloc, LocalExpenseState>(
-                      builder: (context, state) {
-                        List<ExpenseArticle>? dataState = state.expense;
-                        if (state is LocalExpenseLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              color: Theme.of(context).cardColor,
-                            ),
-                          );
-                        }
-                        if (state is LocalExpenseDone) {
-                          print("YouData");
-                          if (dataState!.isEmpty) {
-                            return Center(
-                              child: Text(
-                                "No Data",
-                                style: TextStyle(
-                                  color: Theme.of(context).cardColor,
-                                  fontSize:
-                                      Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium!.fontSize,
-                                ),
-                              ),
-                            );
-                          } else {
-                            return ListView.builder(
-                              itemCount: dataState.length,
-                              itemBuilder: (context, index) {
-                                return ListTile();
-                              },
-                            );
-                          }
-                        }
-                        return SizedBox();
-                      },
-                    ),
-                  ),
+                  buildDataListTile(),
                 ],
               ),
             ),
@@ -129,6 +91,91 @@ class _DashBoardState extends State<DashBoard> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  //DataListTile
+  Expanded buildDataListTile() {
+    return Expanded(
+      child: BlocBuilder<LocalExpenseBloc, LocalExpenseState>(
+        builder: (context, state) {
+          List<ExpenseArticle>? dataState = state.expense;
+          if (state is LocalExpenseLoading) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).cardColor,
+              ),
+            );
+          }
+          if (state is LocalExpenseDone) {
+            print("YouData");
+            if (dataState!.isEmpty) {
+              return Center(
+                child: Text(
+                  "No Data",
+                  style: TextStyle(
+                    color: Theme.of(context).cardColor,
+                    fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+                  ),
+                ),
+              );
+            } else {
+              return ListView.builder(
+                itemCount: dataState.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Theme.of(context).cardColor,
+                    child: ListTile(
+                      iconColor: Colors.lightBlue,
+                      // iconColor: ExpenseType.bill ? Colors.orange  : ExpenseType.food ? Colors.green : ExpenseType.transport ?  Colors.blue,
+                      leading: Icon(Icons.airport_shuttle),
+                      title: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Food",
+                            style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium!.fontSize,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "12/3/2025",
+                            style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                              fontSize:
+                                  Theme.of(
+                                    context,
+                                  ).textTheme.titleSmall!.fontSize,
+                            ),
+                          ),
+                        ],
+                      ),
+                      trailing: Text(
+                        "\$4",
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize:
+                              Theme.of(context).textTheme.titleMedium!.fontSize,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            }
+          }
+          return SizedBox();
+        },
       ),
     );
   }

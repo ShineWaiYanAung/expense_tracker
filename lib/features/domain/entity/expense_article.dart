@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:floor/floor.dart';
 enum ExpenseType {
-   Bill,
-   Food,
-   Transport
+   bill,
+   food,
+   transport
 }
 @TypeConverters([DateTimeConverter]) // Apply the converter
 @Entity(tableName: 'expenses')
@@ -21,7 +21,7 @@ class ExpenseArticle extends Equatable {
   final int time; // Store DateTime as int (timestamp)
 
   ExpenseArticle( {
-    required this.expenseType,
+
     this.id,
     required DateTime time, // Accept DateTime
     required this.name,
@@ -29,6 +29,7 @@ class ExpenseArticle extends Equatable {
     required this.currencyName,
     required this.quantity,
     required this.netPrice,
+    required this.expenseType,
   }) : time = time.millisecondsSinceEpoch; // Convert DateTime to int
 
   /// Convert back to DateTime when needed
