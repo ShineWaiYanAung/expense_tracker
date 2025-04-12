@@ -1,5 +1,7 @@
+import 'package:expense_tracker/features/config/LottieCateogryPath/category_lottie_path.dart';
 import 'package:expense_tracker/features/presentation/bloc/color_state_mangaement/color_bloc.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
+import 'package:expense_tracker/features/presentation/pages/dataInputArea/data_input_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:draggable_button_panel/draggable_button_panel.dart';
 import '../../../domain/entity/expense_article.dart';
@@ -10,6 +12,7 @@ import '../../widget/cardButton/widget_card_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../config/theme/theme.dart';
 import '../../widget/dashboard_widget/pie_chart.dart';
+import 'package:lottie/lottie.dart';
 
 class DashBoard extends StatefulWidget {
   const DashBoard({super.key});
@@ -28,6 +31,15 @@ class _DashBoardState extends State<DashBoard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(),
+        backgroundColor: Theme.of(context).cardColor,
+        foregroundColor: Theme.of(context).scaffoldBackgroundColor,
+        onPressed: () {
+          showDialogOption();
+        },
+        child: Icon(Icons.add, size: 30),
+      ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Stack(
@@ -241,6 +253,60 @@ class _DashBoardState extends State<DashBoard> {
       ),
     );
   }
+
+  void showDialogOption() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                    
+
+
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      radius: 60,
+                      child: Center(child: Padding(
+                        padding: const EdgeInsets.only(bottom: 18.0),
+                        child: Lottie.asset(LottieCategoryPath.food),
+                      )),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: (){
+               
+
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                      radius: 60,
+                      child: Lottie.asset(LottieCategoryPath.apartment),
+                    ),
+                  )
+                ],
+              ),
+              GestureDetector(
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>DataInputTextField(lottieCategoryPath: LottieCategoryPath.transport,)));
+                },
+                child: CircleAvatar(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    radius: 60,
+                    child:Lottie.asset(LottieCategoryPath.transport)
+                ),
+              ),
+            ],
+          )
+    );
+  }
+
 
   //ExpenseResultHere
   Text buildExpenseResult(BuildContext context, String expense) {
