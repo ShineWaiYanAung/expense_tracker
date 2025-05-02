@@ -5,24 +5,26 @@ import 'package:floor/floor.dart';
 @TypeConverters([DateTimeConverter])
 class ExpenseArticleModel extends ExpenseArticle {
   ExpenseArticleModel({
+    required super.note,
     required super.expenseType,
     required super.time,
     required super.name,
     required super.cost,
     required super.currencyName,
-    required super.quantity,
-    required super.netPrice,
+   // required super.quantity,
+  //  required super.netPrice,
   });
 
   factory ExpenseArticleModel.fromEntity(ExpenseArticle entity) {
     return ExpenseArticleModel(
+      note: entity.note,
       expenseType: entity.expenseType,
       time: entity.dateTime,
       name: entity.name,
       cost: entity.cost,
       currencyName: entity.currencyName,
-      quantity: entity.quantity,
-      netPrice: entity.netPrice,
+ //     quantity: entity.quantity,
+   //   netPrice: entity.netPrice,
     );
   }
 }

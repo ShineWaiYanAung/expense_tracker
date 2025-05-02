@@ -60,7 +60,7 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Padding buildEntrySlideCard(BuildContext context) {
+  Widget buildEntrySlideCard(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
       child: SlideAction(

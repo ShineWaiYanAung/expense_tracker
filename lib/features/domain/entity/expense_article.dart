@@ -14,8 +14,9 @@ class ExpenseArticle extends Equatable {
   final String name;
   final double cost;
   final String currencyName;
-  final double quantity;
-  final double netPrice;
+  final String note;
+  //final double quantity;
+ // final double netPrice;
 
   @ColumnInfo(name: 'time')
   final int time; // Store DateTime as int (timestamp)
@@ -23,12 +24,13 @@ class ExpenseArticle extends Equatable {
   ExpenseArticle( {
 
     this.id,
+    required this.note,
     required DateTime time, // Accept DateTime
     required this.name,
     required this.cost,
     required this.currencyName,
-    required this.quantity,
-    required this.netPrice,
+    //required this.quantity,
+  //  required this.netPrice,
     required this.expenseType,
   }) : time = time.millisecondsSinceEpoch; // Convert DateTime to int
 
@@ -38,12 +40,13 @@ class ExpenseArticle extends Equatable {
   @override
   List<Object?> get props => [
     id,
+    note,
     dateTime, // Use the getter to return DateTime
     name,
     cost,
     currencyName,
-    quantity,
-    netPrice,
+ //   quantity,
+ //   netPrice,
     expenseType
   ];
 }

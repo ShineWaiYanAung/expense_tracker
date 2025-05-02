@@ -11,11 +11,11 @@ class GetSavedExpense extends LocalExpenseEvent{
   const GetSavedExpense();
 }
 class RemoveExpense extends LocalExpenseEvent{
-  const RemoveExpense();
+  const RemoveExpense(ExpenseArticle expenseArticle) : super(expenseArticle: expenseArticle);
 }
 class EditExpense extends LocalExpenseEvent{
-  const EditExpense();
+  const EditExpense(ExpenseArticle expenseArticle) : super(expenseArticle: expenseArticle);
 }
 class InsertExpense extends LocalExpenseEvent{
-  const InsertExpense();
+  const InsertExpense(ExpenseArticle expenseArticle) : super(expenseArticle: expenseArticle);
 }
