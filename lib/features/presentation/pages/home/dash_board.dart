@@ -53,6 +53,7 @@ class _DashBoardState extends State<DashBoard> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   buildTopBar(context),
                   SizedBox(height: 40),
@@ -355,9 +356,9 @@ class _DashBoardState extends State<DashBoard> {
           children: [
             buildTextLabel(context, "Total Expenses"),
             buildExpenseResult(
-                context, "  \$${totalCostForAllTime.toStringAsFixed(1)}"),
+                context, "  \$ ${totalCostForAllTime.toStringAsFixed(1)}"),
             buildTextLabel(context, "Last Month"),
-            buildExpenseResult(context, "  \$1000"),
+            buildExpenseResult(context, " \$ ${totalCostForAllTime.toStringAsFixed(1)}"),
           ],
         );
       },

@@ -12,7 +12,7 @@ class DrawerOpen extends StatelessWidget {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              'John Doe',
+              'RockerGyiTinSein',
               style: TextStyle(
                 fontSize: 18,
                 color: Theme.of(context).cardColor,
@@ -21,20 +21,25 @@ class DrawerOpen extends StatelessWidget {
 
             currentAccountPicture: CircleAvatar(
               radius: 90,
-              backgroundColor: Colors.orange,
+              backgroundColor: Colors.blue,
               child: Text(
-                'J',
+                'R',
                 style: TextStyle(fontSize: 30, color: Colors.white),
               ),
             ),
             otherAccountsPictures: [
-              IconButton(
-                icon: Icon(Icons.close),
-                onPressed: () {
-                  drawerKey.currentState?.closeDrawer();
-                },
+              CircleAvatar(
+                backgroundColor: Colors.transparent,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.cloud, color: Colors.blue, size: 20),
+                    Text("35°C", style: TextStyle(fontSize: 12)),
+                  ],
+                ),
               ),
             ],
+
             decoration: BoxDecoration(
               color:
                   Theme.of(context).scaffoldBackgroundColor, // Customize color
@@ -43,33 +48,36 @@ class DrawerOpen extends StatelessWidget {
             accountEmail: null,
           ),
           // Drawer items (other items)
-          Card(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: ListTile(
-              title: Text('Home'),
-              onTap: () {
-                // Navigate to home
-                Navigator.pop(context); // Close drawer
-              },
-            ),
-          ),
-          Card(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: ListTile(
-              title: Text('Home'),
-              onTap: () {
-                // Navigate to home
-                Navigator.pop(context); // Close drawer
-              },
-            ),
-          ),
+          SizedBox(height: 20,),
+          buildCardDrawer(context,Icons.edit,"Edit Profile"),
+          SizedBox(height: 20,),
+          buildCardDrawer(context,Icons.cloud,"Weather ForeCast"),
+          SizedBox(height: 20,),
+          buildCardDrawer(context,Icons.settings,"Setting"),
           Spacer(),
           ListTile(
             leading: IconButton(onPressed: (){}, icon: Icon(Icons.logout,color: Colors.red,)),
-            title: Text("Logout"),
+            title: Text("Logout",style: TextStyle(color: Theme.of(context).scaffoldBackgroundColor),),
           )
         ],
       ),
+    );
+  }
+
+  Widget buildCardDrawer(BuildContext context,IconData iconData,String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal:10.0),
+      child: Card(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: ListTile(
+              leading: Icon(iconData),
+              title: Text(title),
+              onTap: () {
+                // Navigate to home
+                Navigator.pop(context); // Close drawer
+              },
+            ),
+          ),
     );
   }
 }
