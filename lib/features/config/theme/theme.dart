@@ -7,7 +7,6 @@ enum AppThemeColor{
   blue,
   green
 }
-// Abstract class defining the contract for app themes
 abstract class AppTheme {
   late Color scaffoldBackGroundColor;
   late Color gradientFirstColor;
@@ -30,7 +29,7 @@ class AppThemeFactory {
       case AppThemeColor.black :
         return BlackTheme();
       case AppThemeColor.blue :
-        return BlueTheme();
+        return VioletTheme();
       default :
         return BrownTheme();
     }
@@ -96,9 +95,9 @@ class BlackTheme implements AppTheme {
   @override
   Color cardColor = Color(0xff2C2723);
 }
-class BlueTheme implements AppTheme {
+class VioletTheme implements AppTheme {
   @override
-  Color buttonTextColor = Colors.black;
+  Color buttonTextColor = Color(0xff4A3CEB);
 
   @override
   Color focusTextColor = Color(0xff2C2723);
@@ -123,5 +122,5 @@ class BlueTheme implements AppTheme {
   Color unSelectedTextColor = Colors.black45;
 
   @override
-  Color cardColor =Color(0xff81BCF0);
+  Color cardColor =Color(0xff4A3CEB);
 }

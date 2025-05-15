@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:expense_tracker/features/config/LottieCateogryPath/category_lottie_path.dart';
 import 'package:expense_tracker/features/presentation/bloc/color_state_mangaement/color_bloc.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
@@ -36,7 +37,7 @@ class _DashBoardState extends State<DashBoard> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      drawer:DrawerOpen(drawerKey: _scaffoldKey,),
+      drawer: DrawerOpen(drawerKey: _scaffoldKey),
       floatingActionButton: FloatingActionButton(
         shape: CircleBorder(),
         backgroundColor: Theme.of(context).cardColor,
@@ -47,69 +48,84 @@ class _DashBoardState extends State<DashBoard> {
         child: Icon(Icons.add, size: 30),
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildTopBar(context),
-                  SizedBox(height: 40),
-                  buildDataShowCard(context),
-                  SizedBox(height: 30),
-                  buildSecondBar(),
-                  SizedBox(height: 20),
-                  buildDataListTile(),
-                ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).cardColor,
+              Theme.of(context).scaffoldBackgroundColor,
+              Theme.of(context).cardColor,
+            ], // Start and end colors
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildTopBar(context),
+                    SizedBox(height: 40),
+                    buildDataShowCard(context),
+                    SizedBox(height: 30),
+                    buildSecondBar(),
+                    SizedBox(height: 20),
+                    buildDataListTile(),
+                  ],
+                ),
               ),
-            ),
-            if (showPanel)
-              BlocBuilder<ThemeBloc, ThemeState>(
-                builder: (BuildContext context, state) {
-                  return DraggableButtonPanel(
-                    buttonColor: Theme.of(context).cardColor,
-                    panelColor: Theme.of(context).scaffoldBackgroundColor,
-                    key: _draggableButtonPanelKey,
-                    top: 100,
-                    options: [
-                      IconButton(
-                        icon: Icon(Icons.circle, color: Colors.brown),
-                        onPressed: () {
-                          context.read<ThemeBloc>().add(
-                            ChangeThemeEvent(
-                              selectedTheme: AppThemeColor.brown,
-                            ),
-                          );
-                          print("Brown theme applied");
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.circle, color: Colors.black),
-                        onPressed: () {
-                          context.read<ThemeBloc>().add(
-                            ChangeThemeEvent(
-                              selectedTheme: AppThemeColor.black,
-                            ),
-                          );
-                          print("Brown theme applied");
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.circle, color: Colors.blue),
-                        onPressed: () {
-                          context.read<ThemeBloc>().add(
-                            ChangeThemeEvent(selectedTheme: AppThemeColor.blue),
-                          );
-                          print("Brown theme applied");
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
-          ],
+              if (showPanel)
+                BlocBuilder<ThemeBloc, ThemeState>(
+                  builder: (BuildContext context, state) {
+                    return DraggableButtonPanel(
+                      buttonColor: Theme.of(context).cardColor,
+                      panelColor: Theme.of(context).scaffoldBackgroundColor,
+                      key: _draggableButtonPanelKey,
+                      top: 100,
+                      options: [
+                        IconButton(
+                          icon: Icon(Icons.circle, color: Colors.brown),
+                          onPressed: () {
+                            context.read<ThemeBloc>().add(
+                              ChangeThemeEvent(
+                                selectedTheme: AppThemeColor.brown,
+                              ),
+                            );
+                            print("Brown theme applied");
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.circle, color: Colors.black),
+                          onPressed: () {
+                            context.read<ThemeBloc>().add(
+                              ChangeThemeEvent(
+                                selectedTheme: AppThemeColor.black,
+                              ),
+                            );
+                            print("Brown theme applied");
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.circle, color: Color(0xff4A3CEB)),
+                          onPressed: () {
+                            context.read<ThemeBloc>().add(
+                              ChangeThemeEvent(
+                                selectedTheme: AppThemeColor.blue,
+                              ),
+                            );
+                            print("Brown theme applied");
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -294,7 +310,7 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
 
-  Row buildSecondBar() {
+  Widget buildSecondBar() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -305,64 +321,114 @@ class _DashBoardState extends State<DashBoard> {
             fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
           ),
         ),
-        Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Text(
-            "Category",
-            style: TextStyle(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.6), // semi-transparent white
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    spreadRadius: 6,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Text(
+                "Category",
+                style: TextStyle(
+                  color: Theme.of(context).cardColor,
+                  fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
+                ),
+              ),
             ),
           ),
         ),
+
       ],
     );
   }
 
-  Container buildDataShowCard(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      height: 200,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+  Widget buildDataShowCard(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: Stack(
         children: [
-          //PercentageChartHere
-          CircleAvatar(
-            radius: 80,
-            backgroundColor: Color(0xFFF4F4F4),
-            child: ExpensePieChart(),
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
+            child: Container(
+              height: 200,
+              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.4),
+            ),
           ),
-          //CardDataHere
-      BlocBuilder<LocalExpenseBloc, LocalExpenseState>(builder: (BuildContext context, LocalExpenseState state) {
-        List<ExpenseArticle>? allCostData = state.expense;
-        double totalCostForAllTime = 0.0;
-        if (allCostData != null && allCostData.isNotEmpty) {
+          // Foreground content
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              // Optional: Remove color or keep slightly transparent
+              color: Colors.transparent,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                // Percentage Chart Here
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26, // shadow color
+                        blurRadius: 10, // softness of the shadow
+                        spreadRadius: 2, // how far the shadow spreads
+                        offset: Offset(0, 4), // shadow position (x, y)
+                      ),
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    radius: 80,
+                    backgroundColor: Color(0xFFF4F4F4),
+                    child: ExpensePieChart(),
+                  ),
+                ),
 
-          for (var eachCostData in allCostData) {
-            totalCostForAllTime += eachCostData.cost;
-          }
-        }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            buildTextLabel(context, "Total Expenses"),
-            buildExpenseResult(
-                context, "  \$ ${totalCostForAllTime.toStringAsFixed(1)}"),
-            buildTextLabel(context, "Last Month"),
-            buildExpenseResult(context, " \$ ${totalCostForAllTime.toStringAsFixed(1)}"),
-          ],
-        );
-      },
-      )
+                // Card Data Here
+                BlocBuilder<LocalExpenseBloc, LocalExpenseState>(
+                  builder: (BuildContext context, LocalExpenseState state) {
+                    List<ExpenseArticle>? allCostData = state.expense;
+                    double totalCostForAllTime = 0.0;
+                    if (allCostData != null && allCostData.isNotEmpty) {
+                      for (var eachCostData in allCostData) {
+                        totalCostForAllTime += eachCostData.cost;
+                      }
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        buildTextLabel(context, "Total Expenses"),
+                        buildExpenseResult(
+                          context,
+                          "  \$ ${totalCostForAllTime.toStringAsFixed(1)}",
+                        ),
+                        buildTextLabel(context, "Last Month"),
+                        buildExpenseResult(
+                          context,
+                          " \$ ${totalCostForAllTime.toStringAsFixed(1)}",
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -466,16 +532,24 @@ class _DashBoardState extends State<DashBoard> {
       width: 140,
       padding: EdgeInsets.symmetric(vertical: 5),
       alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26, // shadow color
+            blurRadius: 10, // softness of the shadow
+            spreadRadius: 2, // how far the shadow spreads
+            offset: Offset(0, 4), // shadow position (x, y)
+          ),
+        ],
+      ),
       child: Text(
         title,
         style: TextStyle(
           color: Theme.of(context).cardColor,
           fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
         ),
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(30),
       ),
     );
   }
@@ -491,8 +565,7 @@ class _DashBoardState extends State<DashBoard> {
             color: Theme.of(context).scaffoldBackgroundColor,
           ),
           onPressed: () {
-              _scaffoldKey.currentState?.openDrawer();
-
+            _scaffoldKey.currentState?.openDrawer();
           },
         ),
         cardWidget(
@@ -535,7 +608,6 @@ class _DashBoardState extends State<DashBoard> {
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Text(
                 filterLabel(articleData.expenseType),
                 textAlign: TextAlign.right,
@@ -595,9 +667,9 @@ class _DashBoardState extends State<DashBoard> {
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Processing")),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text("Processing")));
                   final String expenseName = _expanseNameController.text;
                   final double cost = double.parse(_costController.text);
                   final String note = _noteController.text;
@@ -627,7 +699,6 @@ class _DashBoardState extends State<DashBoard> {
             ),
           ],
         );
-
       },
     );
   }

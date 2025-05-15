@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:expense_tracker/features/data/model/expense_article_model.dart';
 import 'package:expense_tracker/features/domain/entity/expense_article.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
@@ -21,9 +23,10 @@ class DataInputTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-    final TextEditingController _noteController         = TextEditingController();
-    final TextEditingController _costController         = TextEditingController();
-    final TextEditingController _currencyNameController = TextEditingController();
+    final TextEditingController _noteController = TextEditingController();
+    final TextEditingController _costController = TextEditingController();
+    final TextEditingController _currencyNameController =
+        TextEditingController();
 
     void gatheringAndAdding() {
       final String expenseName = _currencyNameController.text;
@@ -45,104 +48,192 @@ class DataInputTextField extends StatelessWidget {
       );
       _noteController.clear();
       _costController.clear();
-     _currencyNameController.clear();
+      _currencyNameController.clear();
     }
 
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).scaffoldBackgroundColor,
-              ),
-            ),
-            width: 50,
-            child: Image.asset("asset/images/flags/uk.png", fit: BoxFit.cover),
-          ),
-        ],
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(
-              context,
-            ).push(MaterialPageRoute(builder: (context) => DashBoard()));
-          },
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Theme.of(context).scaffoldBackgroundColor,
+      // appBar: AppBar(
+      //   actions: [
+      //     Container(
+      //       margin: EdgeInsets.symmetric(horizontal: 10),
+      //       decoration: BoxDecoration(
+      //         border: Border.all(
+      //           color: Theme.of(context).cardColor,
+      //         ),
+      //       ),
+      //       width: 50,
+      //       child: Image.asset("asset/images/flags/uk.png", fit: BoxFit.cover),
+      //     ),
+      //   ],
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0, // removes the shadow
+      //   surfaceTintColor: Colors.transparent,
+      //   leading: IconButton(
+      //     onPressed: () {
+      //       Navigator.of(
+      //         context,
+      //       ).push(MaterialPageRoute(builder: (context) => DashBoard()));
+      //     },
+      //     icon: Icon(
+      //       Icons.arrow_back_ios,
+      //       color: Theme.of(context).scaffoldBackgroundColor,
+      //     ),
+      //   ),
+      // ),
+      backgroundColor: Theme.of(context).cardColor,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).cardColor,
+              Theme.of(context).scaffoldBackgroundColor,
+              Theme.of(context).cardColor,
+            ], // Start and end colors
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
-      ),
-      backgroundColor: Theme.of(context).cardColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Center(
-                child: CircleAvatar(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  radius: 80,
-                  child: Lottie.asset(lottieCategoryPath, width: 120),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => DashBoard()),
+                        );
+                        // Navigator.of(context).pop(); // Use po
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Theme.of(context).cardColor),
+                      ),
+                      width: 50,
+                      child: Image.asset(
+                        "asset/images/flags/uk.png",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 120),
-                child: Card(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: ListTile(
-                    title: Center(child: Text(filterLabel(type))),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 60),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      buildTextFormField(
-                        Icons.description,
-                        _currencyNameController,
-                        context,
-                        label: "Name",
-                      ),
-                      buildTextFormField(
-                        Icons.attach_money,
-                        _costController,
-                        context,
-                        label: "Cost",
-                      ),
-                      buildTextFormField(
-                        Icons.note_alt,
-                        _noteController,
-                        context,
-                        label: "Note",
-                      ),
-                      SizedBox(height: 16),
-                      ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStateProperty.all<Color>(Theme.of(context).scaffoldBackgroundColor),
-                        ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            // Use _controller.text for logic
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Processing}")),
-                            );
-                            gatheringAndAdding();
-                          }
-                        },
-                        child: Text("Submit",style: TextStyle(color: Colors.black),),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26, // shadow color
+                        blurRadius: 10, // softness of the shadow
+                        spreadRadius: 2, // how far the shadow spreads
+                        offset: Offset(0, 4), // shadow position (x, y)
                       ),
                     ],
                   ),
+                  child: CircleAvatar(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    radius: 80,
+                    child: Lottie.asset(lottieCategoryPath, width: 120),
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 20),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 60,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(
+                          0.6,
+                        ), // semi-transparent white
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white,
+                            blurRadius: 10,
+                            spreadRadius: 6,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Text(filterLabel(type),style: TextStyle(fontSize: 18,color: Theme.of(context).cardColor),),
+                    ),
+                  ),
+                ),
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 120),
+                //   child: Card(
+                //     color: Theme.of(context).scaffoldBackgroundColor,
+                //     child: ListTile(
+                //       title: Center(child: Text(filterLabel(type))),
+                //     ),
+                //   ),
+                // ),
+                SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 60),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        buildTextFormField(
+                          Icons.description,
+                          _currencyNameController,
+                          context,
+                          label: "Name",
+                        ),
+                        buildTextFormField(
+                          Icons.attach_money,
+                          _costController,
+                          context,
+                          label: "Cost",
+                        ),
+                        buildTextFormField(
+                          Icons.note_alt,
+                          _noteController,
+                          context,
+                          label: "Note",
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all<Color>(
+                              Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                          ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              // Use _controller.text for logic
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Processing}")),
+                              );
+                              gatheringAndAdding();
+                            }
+                          },
+                          child: Text(
+                            "Submit",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -200,34 +291,47 @@ class DataInputTextField extends StatelessWidget {
 }
 
 //ExpenseTypeTexField,
-TextFormField buildTextFormFieldOnlyForExpenseType(
+Widget buildTextFormFieldOnlyForExpenseType(
   TextEditingController _controller,
   BuildContext context,
   Icon icon, {
   required String label,
 }) {
-  return TextFormField(
-    controller: _controller,
-    decoration: InputDecoration(
-      focusedBorder: null,
-      prefixIconColor: Theme.of(context).cardColor,
-      prefixIcon: Icon(Icons.airport_shuttle),
-      filled: true,
-      focusColor: Theme.of(context).scaffoldBackgroundColor,
-      fillColor: Theme.of(context).scaffoldBackgroundColor,
-      hintText: label,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(
-          color: Theme.of(context).scaffoldBackgroundColor,
+  return Container(
+    decoration: BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black, // Adjust the color and opacity of the shadow
+          offset: Offset(0, 4), // Set shadow direction
+          blurRadius: 6, // Set shadow blur intensity
+          spreadRadius: 1, // Set shadow spread
+        ),
+      ],
+      borderRadius: BorderRadius.circular(
+        20,
+      ), // Match the TextField's border radius
+    ),
+    child: TextFormField(
+      controller: _controller,
+      decoration: InputDecoration(
+        focusedBorder: null,
+        //  prefixIconColor: Theme.of(context).cardColor,
+        // prefixIcon: Icon(Icons.airport_shuttle),
+        filled: true,
+        focusColor: Theme.of(context).scaffoldBackgroundColor,
+        fillColor: Theme.of(context).scaffoldBackgroundColor,
+        hintText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: Theme.of(context).cardColor),
         ),
       ),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Please enter some text";
+        }
+        return null;
+      },
     ),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return "Please enter some text";
-      }
-      return null;
-    },
   );
 }
