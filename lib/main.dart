@@ -5,23 +5,46 @@ import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/
 import 'package:expense_tracker/features/presentation/pages/boardingScreen/onBoarding_screen.dart';
 import 'package:expense_tracker/features/presentation/pages/home/dash_board.dart';
 import 'package:expense_tracker/injection_container.dart';
-import 'package:expense_tracker/weatherTest.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/config/theme/theme.dart';
 import 'features/presentation/bloc/color_state_mangaement/color_state.dart';
-import 'features/presentation/widget/colortheme/color_button.dart';
-
+import 'package:device_frame/device_frame.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  final savedTheme = await ThemeBloc.loadSavedTheme();
 
-  final savedTheme = await ThemeBloc.loadSavedTheme(); // ✅ Get saved theme before runApp
-
-  runApp(MyApp(initialTheme: savedTheme));
+  runApp(
+     MyApp(initialTheme: savedTheme)
+  );
 }
 
-///BLOC done - Injection Done - BackEndNearly Complete , Need Test
+
+//
+// class MyFramedApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding:EdgeInsets.symmetric(horizontal: 100),
+//       child: Directionality(
+//         textDirection: TextDirection.ltr, // or rtl if needed
+//         child: DeviceFrame(
+//           device: Devices.ios.iPhone13,
+//           screen: Container(
+//             color: Colors.black,
+//             child: Center(
+//               child: Text('Your App Here'),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
 class MyApp extends StatelessWidget {
   final AppThemeColor initialTheme;
   const MyApp({super.key, required this.initialTheme});
@@ -46,18 +69,32 @@ class MyApp extends StatelessWidget {
               textButtonTheme: TextButtonThemeData(
                 style: ButtonStyle(
                   textStyle: MaterialStateProperty.all<TextStyle>(
-                    TextStyle(color: state.theme.buttonTextColor),
+                    TextStyle(color: state.theme.buttonTextColor,),
                   ),
                 ),
               ),
               textTheme: TextTheme(
-                titleLarge: TextStyle(color: state.theme.largeTextColor),
-                titleMedium: TextStyle(color: state.theme.mediumTextColor),
+                displayLarge: TextStyle(fontFamily: 'JetBrainsMono'),
+                displayMedium: TextStyle(fontFamily: 'JetBrainsMono'),
+                displaySmall: TextStyle(fontFamily: 'JetBrainsMono'),
+                headlineLarge: TextStyle(fontFamily: 'JetBrainsMono'),
+                headlineMedium: TextStyle(fontFamily: 'JetBrainsMono'),
+                headlineSmall: TextStyle(fontFamily: 'JetBrainsMono'),
+                titleLarge: TextStyle(color: state.theme.largeTextColor, fontFamily: 'JetBrainsMono'),
+                titleMedium: TextStyle(color: state.theme.mediumTextColor, fontFamily: 'JetBrainsMono'),
+                titleSmall: TextStyle(fontFamily: 'JetBrainsMono'),
+                bodyLarge: TextStyle(fontFamily: 'JetBrainsMono'),
+                bodyMedium: TextStyle(fontFamily: 'JetBrainsMono'),
+                bodySmall: TextStyle(fontFamily: 'JetBrainsMono'),
+                labelLarge: TextStyle(fontFamily: 'JetBrainsMono'),
+                labelMedium: TextStyle(fontFamily: 'JetBrainsMono'),
+                labelSmall: TextStyle(fontFamily: 'JetBrainsMono'),
               ),
+
               colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             ),
             routes: {dashBoard: (context) => DashBoard()},
-            home: DashBoard(),
+            home:OnboardingScreen()
           );
         },
       ),

@@ -1,14 +1,10 @@
 import 'dart:ui';
-
-import 'package:expense_tracker/features/data/model/expense_article_model.dart';
 import 'package:expense_tracker/features/domain/entity/expense_article.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
 import 'package:expense_tracker/features/presentation/pages/home/dash_board.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:country_flags/country_flags.dart';
-import '../../../config/LottieCateogryPath/category_lottie_path.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DataInputTextField extends StatelessWidget {
@@ -23,15 +19,15 @@ class DataInputTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
-    final TextEditingController _noteController = TextEditingController();
-    final TextEditingController _costController = TextEditingController();
-    final TextEditingController _currencyNameController =
+    final TextEditingController noteController = TextEditingController();
+    final TextEditingController costController = TextEditingController();
+    final TextEditingController currencyNameController =
         TextEditingController();
 
     void gatheringAndAdding() {
-      final String expenseName = _currencyNameController.text;
-      final double cost = double.parse(_costController.text);
-      final String note = _noteController.text;
+      final String expenseName = currencyNameController.text;
+      final double cost = double.parse(costController.text);
+      final String note = noteController.text;
       final DateTime dateTime = DateTime.now();
       final ExpenseType expenseType = type;
 
@@ -46,40 +42,12 @@ class DataInputTextField extends StatelessWidget {
       context.read<LocalExpenseBloc>().add(
         InsertExpense(expenseArticlePerData),
       );
-      _noteController.clear();
-      _costController.clear();
-      _currencyNameController.clear();
+      noteController.clear();
+      costController.clear();
+      currencyNameController.clear();
     }
 
     return Scaffold(
-      // appBar: AppBar(
-      //   actions: [
-      //     Container(
-      //       margin: EdgeInsets.symmetric(horizontal: 10),
-      //       decoration: BoxDecoration(
-      //         border: Border.all(
-      //           color: Theme.of(context).cardColor,
-      //         ),
-      //       ),
-      //       width: 50,
-      //       child: Image.asset("asset/images/flags/uk.png", fit: BoxFit.cover),
-      //     ),
-      //   ],
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0, // removes the shadow
-      //   surfaceTintColor: Colors.transparent,
-      //   leading: IconButton(
-      //     onPressed: () {
-      //       Navigator.of(
-      //         context,
-      //       ).push(MaterialPageRoute(builder: (context) => DashBoard()));
-      //     },
-      //     icon: Icon(
-      //       Icons.arrow_back_ios,
-      //       color: Theme.of(context).scaffoldBackgroundColor,
-      //     ),
-      //   ),
-      // ),
       backgroundColor: Theme.of(context).cardColor,
       body: Container(
         width: double.infinity,
@@ -146,42 +114,7 @@ class DataInputTextField extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 60,
-                        vertical: 10,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(
-                          0.6,
-                        ), // semi-transparent white
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.white,
-                            blurRadius: 10,
-                            spreadRadius: 6,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Text(filterLabel(type),style: TextStyle(fontSize: 18,color: Theme.of(context).cardColor),),
-                    ),
-                  ),
-                ),
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(horizontal: 120),
-                //   child: Card(
-                //     color: Theme.of(context).scaffoldBackgroundColor,
-                //     child: ListTile(
-                //       title: Center(child: Text(filterLabel(type))),
-                //     ),
-                //   ),
-                // ),
+                Text(filterLabel(type),style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),),
                 SizedBox(height: 20),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 60),
@@ -191,19 +124,19 @@ class DataInputTextField extends StatelessWidget {
                       children: [
                         buildTextFormField(
                           Icons.description,
-                          _currencyNameController,
+                          currencyNameController,
                           context,
                           label: "Name",
                         ),
                         buildTextFormField(
                           Icons.attach_money,
-                          _costController,
+                          costController,
                           context,
                           label: "Cost",
                         ),
                         buildTextFormField(
                           Icons.note_alt,
-                          _noteController,
+                          noteController,
                           context,
                           label: "Note",
                         ),
@@ -218,7 +151,10 @@ class DataInputTextField extends StatelessWidget {
                             if (_formKey.currentState!.validate()) {
                               // Use _controller.text for logic
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text("Processing}")),
+                                SnackBar(
+                                  content: Text("Settings Your Data successfully!"),
+                                  backgroundColor: Colors.green,
+                                ),
                               );
                               gatheringAndAdding();
                             }

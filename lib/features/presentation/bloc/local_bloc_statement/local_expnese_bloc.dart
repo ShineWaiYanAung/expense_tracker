@@ -18,13 +18,14 @@ class LocalExpenseBloc extends Bloc<LocalExpenseEvent, LocalExpenseState>{
       this._saveExpenseUseCase,
       this._getSavedArticleUseCase,
       this._removeExpenseUseCase,
-      ) :
-      super(const LocalExpenseLoading()){
+      ) : super(const LocalExpenseLoading()) {
     on<GetSavedExpense>(onGetSavedExpense);
     on<RemoveExpense>(onRemovedExpense);
     on<InsertExpense>(onInsertExpense);
     on<EditExpense>(onEditedExpense);
+    on<FilterExpenseByType>(_onFilterExpenseByType);
   }
+
 
   void onGetSavedExpense(GetSavedExpense event, Emitter<LocalExpenseState>emit)async{
     final expense = await _getSavedArticleUseCase();
@@ -45,4 +46,18 @@ class LocalExpenseBloc extends Bloc<LocalExpenseEvent, LocalExpenseState>{
     final expenses = await _getSavedArticleUseCase();
     emit(LocalExpenseDone(expenses));
   }
+  void _onFilterExpenseByType(FilterExpenseByType event, Emitter<LocalExpenseState> emit) async {
+    final allExpenses = await _getSavedArticleUseCase();
+
+    if (event.type == null) {
+      emit(LocalExpenseDone(allExpenses)); // no filter, show all
+    } else {
+      final filtered = allExpenses
+          .where((e) => e.expenseType == event.type)
+          .toList();
+
+      emit(LocalExpenseDone(filtered));
+    }
+  }
+
 }

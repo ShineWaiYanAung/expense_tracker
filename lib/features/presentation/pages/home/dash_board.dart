@@ -26,6 +26,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  ExpenseType? _selectedType;
   bool showPanel = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<DraggableButtonPanelState> _draggableButtonPanelKey =
@@ -54,7 +55,6 @@ class _DashBoardState extends State<DashBoard> {
             colors: [
               Theme.of(context).cardColor,
               Theme.of(context).scaffoldBackgroundColor,
-              Theme.of(context).cardColor,
             ], // Start and end colors
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -200,68 +200,87 @@ class _DashBoardState extends State<DashBoard> {
                           showDialogEditBox(eachData);
                         }
                       },
-                      child: Card(
-                        color: Theme.of(context).cardColor,
-                        child: ExpansionTile(
-                          collapsedIconColor: _getIconColor2(
-                            eachData.expenseType,
-                          ),
-                          iconColor: _getIconColor(eachData.expenseType),
-                          leading: _getIconForExpenseType(eachData.expenseType),
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                eachData.name,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize:
-                                      Theme.of(
-                                        context,
-                                      ).textTheme.titleMedium?.fontSize,
-                                ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: Colors.white.withOpacity(0.2),
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                formattedDate,
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).scaffoldBackgroundColor,
-                                  fontSize:
-                                      Theme.of(
-                                        context,
-                                      ).textTheme.titleSmall?.fontSize,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 8,
+                                  offset: Offset(0, 4),
                                 ),
+                              ],
+                            ),
+                            child: Theme(
+                              data: Theme.of(
+                                context,
+                              ).copyWith(dividerColor: Colors.transparent),
+                              child: ExpansionTile(
+                                iconColor: _getIconColor(eachData.expenseType),
+                                collapsedIconColor: _getIconColor(
+                                  eachData.expenseType,
+                                ),
+                                leading: Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: _getIconForExpenseType(
+                                    eachData.expenseType,
+                                  ),
+                                ),
+                                title: Text(
+                                  eachData.name,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium?.fontSize,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  formattedDate,
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.titleSmall?.fontSize,
+                                  ),
+                                ),
+                                trailing: Text(
+                                  "\$ ${eachData.cost}",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize:
+                                        Theme.of(
+                                          context,
+                                        ).textTheme.titleMedium?.fontSize,
+                                  ),
+                                ),
+                                children: [
+                                  Text(
+                                    eachData.note,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          trailing: Text(
-                            "\$ ${eachData.cost}",
-                            style: TextStyle(
-                              color: Colors.orange,
-                              fontWeight: FontWeight.bold,
-                              fontSize:
-                                  Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium?.fontSize,
                             ),
                           ),
-                          children: [
-                            Text(
-                              eachData.note,
-                              style: TextStyle(
-                                color:
-                                    Theme.of(context).scaffoldBackgroundColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize:
-                                    Theme.of(
-                                      context,
-                                    ).textTheme.titleMedium?.fontSize,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
                     ),
@@ -309,6 +328,42 @@ class _DashBoardState extends State<DashBoard> {
         return Icon(Icons.airport_shuttle);
     }
   }
+  double _getContainerSize(ExpenseType type) {
+    return _selectedType == type ? 40.0 : 30.0;
+  }
+  Widget _buildExpenseContainer(ExpenseType type, IconData iconData, String label) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (_selectedType == type) {
+            _selectedType = null;
+            context.read<LocalExpenseBloc>().add(FilterExpenseByType(null)); // Show all
+          } else {
+            _selectedType = type;
+            context.read<LocalExpenseBloc>().add(FilterExpenseByType(type));
+          }
+        });
+      },
+
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        width: _getContainerSize(type),
+        height: 30,
+        decoration: BoxDecoration(
+          color: _getIconColor(type).withOpacity(0.2),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: _getIconColor(type),
+            width: _selectedType == type ? 3 : 1,
+          ),
+        ),
+        child: Center(
+          child: Icon(iconData, color: Colors.white, size: 15),
+        ),
+      ),
+    );
+  }
 
   Widget buildSecondBar() {
     return Row(
@@ -317,24 +372,25 @@ class _DashBoardState extends State<DashBoard> {
         Text(
           "Recent",
           style: TextStyle(
-            color: Theme.of(context).cardColor,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
             fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
           ),
         ),
         ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
             child: Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.6), // semi-transparent white
+                color: Colors.white.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black12,
-                    blurRadius: 10,
-                    spreadRadius: 6,
+                    blurRadius: 8,
                     offset: Offset(0, 4),
                   ),
                 ],
@@ -342,14 +398,13 @@ class _DashBoardState extends State<DashBoard> {
               child: Text(
                 "Category",
                 style: TextStyle(
-                  color: Theme.of(context).cardColor,
+                  color: Colors.white,
                   fontSize: Theme.of(context).textTheme.titleMedium!.fontSize,
                 ),
               ),
             ),
           ),
         ),
-
       ],
     );
   }
@@ -360,7 +415,7 @@ class _DashBoardState extends State<DashBoard> {
       child: Stack(
         children: [
           BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
             child: Container(
               height: 200,
               color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.4),
@@ -417,11 +472,18 @@ class _DashBoardState extends State<DashBoard> {
                           context,
                           "  \$ ${totalCostForAllTime.toStringAsFixed(1)}",
                         ),
-                        buildTextLabel(context, "Last Month"),
-                        buildExpenseResult(
-                          context,
-                          " \$ ${totalCostForAllTime.toStringAsFixed(1)}",
-                        ),
+
+                    Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                    _buildExpenseContainer(ExpenseType.bill, Icons.receipt_long, 'Bill'),
+                    SizedBox(width: 10,),
+                    _buildExpenseContainer(ExpenseType.food, Icons.fastfood, 'Food'),
+                      SizedBox(width: 10,),
+                    _buildExpenseContainer(ExpenseType.transport, Icons.train, 'Transport')
+                    ],
+                    )
+
                       ],
                     );
                   },
@@ -546,10 +608,7 @@ class _DashBoardState extends State<DashBoard> {
       ),
       child: Text(
         title,
-        style: TextStyle(
-          color: Theme.of(context).cardColor,
-          fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-        ),
+        style: TextStyle(color: Theme.of(context).cardColor, fontSize: 12),
       ),
     );
   }

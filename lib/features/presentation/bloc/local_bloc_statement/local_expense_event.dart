@@ -19,3 +19,9 @@ class EditExpense extends LocalExpenseEvent{
 class InsertExpense extends LocalExpenseEvent{
   const InsertExpense(ExpenseArticle expenseArticle) : super(expenseArticle: expenseArticle);
 }
+class FilterExpenseByType extends LocalExpenseEvent {
+  final ExpenseType? type; // null means show all
+
+  const FilterExpenseByType(this.type);
+  
+}

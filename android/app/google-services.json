@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "755503957770",
+    "project_id": "my-weather-api6969",
+    "storage_bucket": "my-weather-api6969.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755503957770:android:935c58f433edb5ae8a1cf3",
+        "android_client_info": {
+          "package_name": "com.example.expense_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-oTWVX59taSRdRRijujv28wZSz4xaK5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

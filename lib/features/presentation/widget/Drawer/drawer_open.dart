@@ -1,11 +1,45 @@
+import 'dart:io';
+
+import 'package:expense_tracker/weatherTest.dart';
 import 'package:flutter/material.dart';
 
-class DrawerOpen extends StatelessWidget {
+import '../../../data/data_sources/local_light/user_preferences.dart';
+import '../../pages/setting/setting.dart';
+
+class DrawerOpen extends StatefulWidget {
   final GlobalKey<ScaffoldState> drawerKey;
   const DrawerOpen({super.key, required this.drawerKey});
 
   @override
+  State<DrawerOpen> createState() => _DrawerOpenState();
+}
+
+class _DrawerOpenState extends State<DrawerOpen> {
+  File? _profileImage;
+  String? _usernameController ;
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+
+
+
+  Future<void> _loadUserData() async {
+    final username = await UserPreferences.getUsername();
+    final imageFile = await UserPreferences.getProfileImageFile();
+
+    if (username != null) _usernameController = username;
+    if (imageFile != null) {
+      setState(() {
+        _profileImage = imageFile;
+      });
+    }
+  }
+  @override
   Widget build(BuildContext context) {
+
     return Drawer(
       backgroundColor: Theme.of(context).cardColor,
       child:Container(
@@ -24,7 +58,7 @@ class DrawerOpen extends StatelessWidget {
           children: [
             UserAccountsDrawerHeader(
               accountName: Text(
-                'RockerGyiTinSein',
+              _usernameController! ?? "Empty",
                 style: TextStyle(
                   fontSize: 18,
                   color:Colors.white,
@@ -34,11 +68,22 @@ class DrawerOpen extends StatelessWidget {
               currentAccountPicture: CircleAvatar(
                 radius: 90,
                 backgroundColor: Colors.blue,
-                child: Text(
-                  'R',
-                  style: TextStyle(fontSize: 30, color: Colors.white),
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Colors.grey[300],
+                  backgroundImage:
+                  _profileImage != null ? FileImage(_profileImage!) : null,
+                  child:
+                  _profileImage == null
+                      ? Icon(
+                    Icons.camera_alt,
+                    size: 30,
+                    color: Colors.grey[700],
+                  )
+                      : null,
                 ),
               ),
+
               otherAccountsPictures: [
                 CircleAvatar(
                   backgroundColor: Colors.transparent,
@@ -60,11 +105,14 @@ class DrawerOpen extends StatelessWidget {
             ),
             // Drawer items (other items)
             SizedBox(height: 20),
-            buildCardDrawer(context, Icons.edit, "Edit Profile"),
+            buildCardDrawer(context, Icons.edit, "Edit Profile",(){}),
             SizedBox(height: 20),
-            buildCardDrawer(context, Icons.cloud, "Weather ForeCast"),
+            buildCardDrawer(context, Icons.cloud, "Weather ForeCast",(){Navigator.of(context).push(MaterialPageRoute(builder: (context) => WeatherTest(),));}),
             SizedBox(height: 20),
-            buildCardDrawer(context, Icons.settings, "Setting"),
+            buildCardDrawer(context, Icons.settings, "Setting",(){
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SettingsPage()));
+
+            }),
             Spacer(),
             ListTile(
               leading: IconButton(
@@ -88,6 +136,7 @@ class DrawerOpen extends StatelessWidget {
     BuildContext context,
     IconData iconData,
     String title,
+      VoidCallback onTap
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -96,10 +145,9 @@ class DrawerOpen extends StatelessWidget {
         child: ListTile(
           leading: Icon(iconData),
           title: Text(title),
-          onTap: () {
-            // Navigate to home
-            Navigator.pop(context); // Close drawer
-          },
+          onTap:
+            onTap,
+
         ),
       ),
     );

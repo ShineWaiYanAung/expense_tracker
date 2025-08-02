@@ -17,7 +17,7 @@ class OnboardingScreen extends StatelessWidget {
               //LottieAni
               SizedBox(height: 40),
               Center(
-                child: SizedBox(width: 350, height: 400, child: WalletLottie()),
+                child: SizedBox(width: 350, height: 300, child: WalletLottie()),
               ),
 
               //ContainerCard
@@ -38,7 +38,7 @@ class OnboardingScreen extends StatelessWidget {
                       "Track Your Expense",
                       style: TextButtonTheme.of(
                         context,
-                      ).style?.textStyle?.resolve({})?.copyWith(fontSize: 30),
+                      ).style?.textStyle?.resolve({})?.copyWith(fontSize: 30,color: Theme.of(context).scaffoldBackgroundColor),
                     ),
 
                     Text(
@@ -46,7 +46,7 @@ class OnboardingScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextButtonTheme.of(context).style?.textStyle
                           ?.resolve({})
-                          ?.copyWith(fontSize: 20, fontWeight: FontWeight.bold),
+                          ?.copyWith(fontSize: 20, fontWeight: FontWeight.bold,color: Theme.of(context).scaffoldBackgroundColor),
                     ),
 
                     buildEntrySlideCard(context),
@@ -55,7 +55,8 @@ class OnboardingScreen extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        )
+
       ),
     );
   }

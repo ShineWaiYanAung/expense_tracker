@@ -11,4 +11,5 @@ abstract class ExpenseRepository{
  Future<void> deleteExpense(ExpenseArticle expense);
 
  Future<void> editExpense(ExpenseArticle entity);
+
 }
