@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:expense_tracker/features/presentation/pages/to_do/to_do.dart';
 import 'package:expense_tracker/weatherTest.dart';
 import 'package:flutter/material.dart';
 
@@ -105,13 +106,15 @@ class _DrawerOpenState extends State<DrawerOpen> {
             ),
             // Drawer items (other items)
             SizedBox(height: 20),
-            buildCardDrawer(context, Icons.edit, "Edit Profile",(){}),
+            buildCardDrawer(context, Icons.edit, "Daily Task",(){
+
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  ToDo()));
+            }),
             SizedBox(height: 20),
             buildCardDrawer(context, Icons.cloud, "Weather ForeCast",(){Navigator.of(context).push(MaterialPageRoute(builder: (context) => WeatherTest(),));}),
             SizedBox(height: 20),
             buildCardDrawer(context, Icons.settings, "Setting",(){
               Navigator.of(context).push(MaterialPageRoute(builder: (context) =>  SettingsPage()));
-
             }),
             Spacer(),
             ListTile(

@@ -678,6 +678,9 @@ class _DashBoardState extends State<DashBoard> {
               IconButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  setState(() {
+
+                  });
                 },
                 icon: Icon(
                   Icons.close,
