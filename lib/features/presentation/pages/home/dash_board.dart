@@ -70,6 +70,8 @@ class _DashBoardState extends State<DashBoard> {
                   children: [
                     buildTopBar(context),
                     SizedBox(height: 40),
+                    buildPriceUi(),
+                    SizedBox(height: 20),
                     buildDataShowCard(context),
                     SizedBox(height: 30),
                     buildSecondBar(),
@@ -130,6 +132,9 @@ class _DashBoardState extends State<DashBoard> {
       ),
     );
   }
+
+  //PriceUi
+
 
   //DataListTile
   Expanded buildDataListTile() {
@@ -296,17 +301,6 @@ class _DashBoardState extends State<DashBoard> {
     );
   }
 
-  Color _getIconColor2(ExpenseType expenseType) {
-    switch (expenseType) {
-      case ExpenseType.bill:
-        return Colors.orange;
-      case ExpenseType.food:
-        return Colors.green;
-      default:
-        return Colors.blue;
-    }
-  }
-
   Color _getIconColor(ExpenseType expenseType) {
     switch (expenseType) {
       case ExpenseType.bill:
@@ -329,7 +323,7 @@ class _DashBoardState extends State<DashBoard> {
     }
   }
   double _getContainerSize(ExpenseType type) {
-    return _selectedType == type ? 40.0 : 30.0;
+    return _selectedType == type ? 80.0 : 50.0;
   }
   Widget _buildExpenseContainer(ExpenseType type, IconData iconData, String label) {
     return GestureDetector(
@@ -349,17 +343,79 @@ class _DashBoardState extends State<DashBoard> {
         duration: Duration(milliseconds: 300),
         curve: Curves.easeInOut,
         width: _getContainerSize(type),
-        height: 30,
+        height: _getContainerSize(type),
         decoration: BoxDecoration(
           color: _getIconColor(type).withOpacity(0.2),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _getIconColor(type),
-            width: _selectedType == type ? 3 : 1,
+            width: _selectedType == type ? 6 : 3,
           ),
         ),
         child: Center(
-          child: Icon(iconData, color: Colors.white, size: 15),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(
+              begin: 20,
+              end: _selectedType == type ? 40 : 20,
+            ),
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            builder: (context, size, child) {
+              return Icon(
+                iconData,
+                color: Colors.white,
+                size: size,
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///PriceIsHere
+  Widget buildPriceUi() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 30,horizontal: 24),
+          color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.4),
+          child:  BlocBuilder<LocalExpenseBloc, LocalExpenseState>(
+            builder: (BuildContext context, LocalExpenseState state) {
+              List<ExpenseArticle>? allCostData = state.expense;
+              double totalCostForAllTime = 0.0;
+              if (allCostData != null && allCostData.isNotEmpty) {
+                for (var eachCostData in allCostData) {
+                  totalCostForAllTime += eachCostData.cost;
+                }
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    children: [
+                    Text("Total Expenses",style: TextStyle(  color: Theme.of(context).scaffoldBackgroundColor,
+                      fontSize: Theme.of(context).textTheme.titleLarge?.fontSize, ),),
+                      Spacer(),
+                      IconButton(onPressed: (){}, icon: Icon(Icons.add_alarm,size : 30),color: Theme.of(context).scaffoldBackgroundColor,)
+                    ],
+                  ),
+                  SizedBox(height: 20,),
+                  buildExpenseResult(
+                    context,
+                    "\$ ${totalCostForAllTime.toStringAsFixed(1)}",
+                  ),
+
+
+
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -452,42 +508,24 @@ class _DashBoardState extends State<DashBoard> {
                     child: ExpensePieChart(),
                   ),
                 ),
-
-                // Card Data Here
-                BlocBuilder<LocalExpenseBloc, LocalExpenseState>(
-                  builder: (BuildContext context, LocalExpenseState state) {
-                    List<ExpenseArticle>? allCostData = state.expense;
-                    double totalCostForAllTime = 0.0;
-                    if (allCostData != null && allCostData.isNotEmpty) {
-                      for (var eachCostData in allCostData) {
-                        totalCostForAllTime += eachCostData.cost;
-                      }
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _buildExpenseContainer(ExpenseType.food, Icons.fastfood, 'Food'),
+                    SizedBox(height: 20,),
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        buildTextLabel(context, "Total Expenses"),
-                        buildExpenseResult(
-                          context,
-                          "  \$ ${totalCostForAllTime.toStringAsFixed(1)}",
-                        ),
+                        _buildExpenseContainer(ExpenseType.bill, Icons.receipt_long, 'Bill'),
+                        SizedBox(width: 10,),
 
-                    Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                    _buildExpenseContainer(ExpenseType.bill, Icons.receipt_long, 'Bill'),
-                    SizedBox(width: 10,),
-                    _buildExpenseContainer(ExpenseType.food, Icons.fastfood, 'Food'),
-                      SizedBox(width: 10,),
-                    _buildExpenseContainer(ExpenseType.transport, Icons.train, 'Transport')
-                    ],
-                    )
-
+                        SizedBox(width: 10,),
+                        _buildExpenseContainer(ExpenseType.transport, Icons.train, 'Transport')
                       ],
-                    );
-                  },
-                ),
+                    ),
+                  ],
+                )
+
               ],
             ),
           ),
@@ -582,6 +620,7 @@ class _DashBoardState extends State<DashBoard> {
       expense,
       style: TextStyle(
         fontWeight: FontWeight.bold,
+        letterSpacing: 2,
         color: Theme.of(context).scaffoldBackgroundColor,
         fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
       ),

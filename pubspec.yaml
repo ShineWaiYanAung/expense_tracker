@@ -67,7 +67,8 @@ dev_dependencies:
   device_frame: ^1.2.0
   shared_preferences: ^2.2.2
   image_picker: ^1.1.2
-
+  cloud_firestore: ^4.14.0
+  firebase_core: ^2.32.0
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -87,6 +88,7 @@ flutter:
     - lottieInputCategory/transport.json
     - asset/images/flags/uk.png
     - lottie/NoData/robotSayingNo.json
+    - lottie/cute_bear.json
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

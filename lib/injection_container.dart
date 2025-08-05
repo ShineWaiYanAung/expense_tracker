@@ -7,24 +7,24 @@ import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
 import 'package:get_it/get_it.dart';
 
-import 'features/data/data_repository/expense_repository.dart';
+import 'features/data/data_repository/expense_repository_local.dart';
 import 'features/domain/repository/expense_repository.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
-  //LocalDataBase
-  final database =
-      await $FloorAppDataBase
-          .databaseBuilder('local_expense_database.db')
-          .build();
-  sl.registerSingleton<AppDataBase>(database);
-  sl.registerSingleton<ExpenseRepository>(ExpenseImpl(sl()));
-
-  //LocalBloc
-  sl.registerFactory<LocalExpenseBloc>(
-    () => LocalExpenseBloc(sl(), sl(), sl(), sl()),
-  );
+  // //LocalDataBase
+  // final database =
+  //     await $FloorAppDataBase
+  //         .databaseBuilder('local_expense_database.db')
+  //         .build();
+  // sl.registerSingleton<AppDataBase>(database);
+  // sl.registerSingleton<ExpenseRepository>(ExpenseImpl(sl()));
+  //
+  // //LocalBloc
+  // sl.registerFactory<LocalExpenseBloc>(
+  //   () => LocalExpenseBloc(sl(), sl(), sl(), sl()),
+  // );
   //UseCases
   sl.registerSingleton<GetSavedArticleUseCase>(GetSavedArticleUseCase(sl()));
   sl.registerSingleton<RemoveExpenseUseCase>(RemoveExpenseUseCase(sl()));

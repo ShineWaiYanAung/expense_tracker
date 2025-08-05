@@ -1,49 +1,38 @@
-import 'package:expense_tracker/features/config/route/route.dart';
-import 'package:expense_tracker/features/presentation/bloc/color_state_mangaement/color_bloc.dart';
-import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
-import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
-import 'package:expense_tracker/features/presentation/pages/boardingScreen/onBoarding_screen.dart';
-import 'package:expense_tracker/features/presentation/pages/home/dash_board.dart';
-import 'package:expense_tracker/injection_container.dart';
+import 'package:expense_tracker/features/presentation/pages/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'features/config/route/route.dart';
 import 'features/config/theme/theme.dart';
+import 'features/presentation/bloc/color_state_mangaement/color_bloc.dart';
 import 'features/presentation/bloc/color_state_mangaement/color_state.dart';
-import 'package:device_frame/device_frame.dart';
+import 'features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
+import 'features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
+import 'features/presentation/pages/boardingScreen/onBoarding_screen.dart';
+import 'features/presentation/pages/home/dash_board.dart';
+import 'firebase_options.dart'; // if you're using flutterfire_cli
+import 'package:firebase_core/firebase_core.dart';
+
+import 'injection_container.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase and dependencies
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await initializeDependencies();
+
+  // Lock orientation
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Load saved theme
   final savedTheme = await ThemeBloc.loadSavedTheme();
 
-  runApp(
-     MyApp(initialTheme: savedTheme)
-  );
+  // Run app
+  runApp(MyApp(initialTheme: savedTheme));
 }
-
-
-//
-// class MyFramedApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding:EdgeInsets.symmetric(horizontal: 100),
-//       child: Directionality(
-//         textDirection: TextDirection.ltr, // or rtl if needed
-//         child: DeviceFrame(
-//           device: Devices.ios.iPhone13,
-//           screen: Container(
-//             color: Colors.black,
-//             child: Center(
-//               child: Text('Your App Here'),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class MyApp extends StatelessWidget {
   final AppThemeColor initialTheme;
@@ -53,51 +42,53 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<LocalExpenseBloc>(
-          create: (context) => sl()..add(GetSavedExpense()),
+        // BlocProvider<LocalExpenseBloc>(
+        //   create: (context) {
+        //     final bloc = sl<LocalExpenseBloc>();
+        //     // Delay the event to avoid blocking main thread
+        //     Future.microtask(() => bloc.add(GetSavedExpense()));
+        //     return bloc;
+        //   },
+        // ),
+        BlocProvider<ThemeBloc>(
+          create: (_) => ThemeBloc(initialTheme),
         ),
-        BlocProvider(create: (_) => ThemeBloc(initialTheme)),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (BuildContext context, state) {
+        builder: (context, state) {
           return MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(
-              scaffoldBackgroundColor: state.theme.scaffoldBackGroundColor,
-              cardColor: state.theme.cardColor,
-              buttonTheme: ButtonThemeData(buttonColor: state.theme.cardColor),
-              textButtonTheme: TextButtonThemeData(
-                style: ButtonStyle(
-                  textStyle: MaterialStateProperty.all<TextStyle>(
-                    TextStyle(color: state.theme.buttonTextColor,),
-                  ),
-                ),
-              ),
-              textTheme: TextTheme(
-                displayLarge: TextStyle(fontFamily: 'JetBrainsMono'),
-                displayMedium: TextStyle(fontFamily: 'JetBrainsMono'),
-                displaySmall: TextStyle(fontFamily: 'JetBrainsMono'),
-                headlineLarge: TextStyle(fontFamily: 'JetBrainsMono'),
-                headlineMedium: TextStyle(fontFamily: 'JetBrainsMono'),
-                headlineSmall: TextStyle(fontFamily: 'JetBrainsMono'),
-                titleLarge: TextStyle(color: state.theme.largeTextColor, fontFamily: 'JetBrainsMono'),
-                titleMedium: TextStyle(color: state.theme.mediumTextColor, fontFamily: 'JetBrainsMono'),
-                titleSmall: TextStyle(fontFamily: 'JetBrainsMono'),
-                bodyLarge: TextStyle(fontFamily: 'JetBrainsMono'),
-                bodyMedium: TextStyle(fontFamily: 'JetBrainsMono'),
-                bodySmall: TextStyle(fontFamily: 'JetBrainsMono'),
-                labelLarge: TextStyle(fontFamily: 'JetBrainsMono'),
-                labelMedium: TextStyle(fontFamily: 'JetBrainsMono'),
-                labelSmall: TextStyle(fontFamily: 'JetBrainsMono'),
-              ),
-
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            ),
-            routes: {dashBoard: (context) => DashBoard()},
-            home:OnboardingScreen()
+            title: 'Expense Tracker',
+            debugShowCheckedModeBanner: false,
+            theme: buildAppTheme(state.theme),
+            home: const Login(),
+            routes: {
+              dashBoard: (context) => const DashBoard(),
+            },
           );
         },
       ),
     );
   }
+  ThemeData buildAppTheme(AppTheme theme) {
+    return ThemeData(
+      scaffoldBackgroundColor: theme.scaffoldBackGroundColor,
+      cardColor: theme.cardColor,
+      buttonTheme: ButtonThemeData(buttonColor: theme.cardColor),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.all<TextStyle>(
+            TextStyle(color: theme.buttonTextColor),
+          ),
+        ),
+      ),
+      textTheme: TextTheme(
+        titleLarge: TextStyle(color: theme.largeTextColor, fontFamily: 'JetBrainsMono'),
+        titleMedium: TextStyle(color: theme.mediumTextColor, fontFamily: 'JetBrainsMono'),
+        bodyMedium: const TextStyle(fontFamily: 'JetBrainsMono'),
+        // Add other styles if needed
+      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+    );
+  }
+
 }
