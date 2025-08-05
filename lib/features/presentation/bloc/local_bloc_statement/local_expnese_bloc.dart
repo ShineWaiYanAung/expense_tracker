@@ -1,12 +1,13 @@
 
 
-import 'package:expense_tracker/features/domain/usecases/edit_expense.dart';
-import 'package:expense_tracker/features/domain/usecases/get_save_expense.dart';
-import 'package:expense_tracker/features/domain/usecases/remove_expense.dart';
-import 'package:expense_tracker/features/domain/usecases/save_expense.dart';
+import 'package:expense_tracker/features/domain/usecases/expenses/edit_expense.dart';
+import 'package:expense_tracker/features/domain/usecases/expenses/save_expense.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../domain/usecases/expenses/get_save_expense.dart';
+import '../../../domain/usecases/expenses/remove_expense.dart';
 
 class LocalExpenseBloc extends Bloc<LocalExpenseEvent, LocalExpenseState>{
   final GetSavedArticleUseCase _getSavedArticleUseCase;

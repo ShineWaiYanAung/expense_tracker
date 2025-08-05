@@ -3,9 +3,9 @@ import 'package:expense_tracker/features/data/model/expense_article_model.dart';
 import 'package:expense_tracker/features/domain/entity/expense_article.dart';
 import 'package:expense_tracker/features/domain/repository/expense_repository.dart';
 
-class ExpenseImpl implements ExpenseRepository{
+class ExpenseImplLocal implements ExpenseRepository{
   late final AppDataBase _appDataBase;
-  ExpenseImpl(this._appDataBase);
+  ExpenseImplLocal(this._appDataBase);
   @override
   Future<void> deleteExpense(ExpenseArticle expense) {
     // TODO: implement deleteExpense

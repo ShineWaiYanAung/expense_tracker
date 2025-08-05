@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+
+import '../../../../FireBase/FireBaseStore/fire_base_store_service.dart';
+import '../../../data/data_repository/auth_repository.dart';
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -68,22 +71,59 @@ class _LoginState extends State<Login> {
                     ),
                     const SizedBox(height: 30),
                     ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          final username = _usernameController.text;
-                          final password = _passwordController.text;
-                          final token = _tokenController.text;
-                          final country = _selectedCountry;
-          
-                          debugPrint('Username: $username');
-                          debugPrint('Password: $password');
-                          debugPrint('Country: $country');
-                          debugPrint('Token: $token');
-          
-                          // You can now send this data to your WeatherAPI or elsewhere
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            final username = _usernameController.text.trim();
+                            final password = _passwordController.text.trim();
+                            final token = _tokenController.text.trim();
+                            final country = _selectedCountry ?? '';
+
+                            // 1. Fetch all users
+                            final authRepo = AuthRepoImplFireBase(FirebaseStoreService());
+                            final users = await authRepo.getSavedAuth();
+
+                            // 2. Find matching user with token
+                            final matchedUsers = users.where((user) => user.token == token).toList();
+
+                            if (matchedUsers.isEmpty) {
+                              // ❌ Token does not exist
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Invalid token – Sign-up denied')),
+                              );
+                              return;
+                            }
+
+                            final matchedUser = matchedUsers.first;
+
+                            // 3. Check if token has already been used
+                            if ((matchedUser.name.isNotEmpty || matchedUser.password.isNotEmpty)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('This token has already been used')),
+                              );
+                              return;
+                            }
+
+                            // 4. Update existing user entry
+                            final updatedUser = matchedUser.copyWith(
+                              name: username,
+                              password: password,
+                              country: country,
+                              isLogin: true,
+                            );
+
+                            await authRepo.editAuth(updatedUser);
+
+                            // 5. Success feedback
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Signed up successfully')),
+                            );
+
+                            // Optional: Navigate to next screen here
+                          }
                         }
-                      },
-                      child: const Text("Sign Up"),
+                        ,
+
+                        child: const Text("Sign Up"),
                     ),
 
                     const SizedBox(height: 16),

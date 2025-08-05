@@ -3,7 +3,7 @@ import 'package:expense_tracker/features/domain/entity/expense_article.dart';
 abstract class ExpenseRepository{
 
 
- //Local DataBase
+ //FireBase
  Future<List<ExpenseArticle>> getSavedExpense();
 
  Future<void> saveExpense(ExpenseArticle expense);

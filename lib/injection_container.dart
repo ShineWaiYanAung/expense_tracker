@@ -1,14 +1,21 @@
 import 'package:expense_tracker/features/data/data_sources/local/local_expense_database.dart';
-import 'package:expense_tracker/features/domain/usecases/edit_expense.dart';
-import 'package:expense_tracker/features/domain/usecases/get_save_expense.dart';
-import 'package:expense_tracker/features/domain/usecases/remove_expense.dart';
-import 'package:expense_tracker/features/domain/usecases/save_expense.dart';
+import 'package:expense_tracker/features/domain/usecases/expenses/edit_expense.dart';
+import 'package:expense_tracker/features/domain/usecases/expenses/save_expense.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
 import 'package:get_it/get_it.dart';
 
+import 'FireBase/FireBaseStore/fire_base_store_service.dart';
+import 'features/data/data_repository/auth_repository.dart';
 import 'features/data/data_repository/expense_repository_local.dart';
+import 'features/domain/repository/auth_repository.dart';
 import 'features/domain/repository/expense_repository.dart';
+import 'features/domain/usecases/auth/edit_auth.dart';
+import 'features/domain/usecases/auth/get_auth.dart';
+import 'features/domain/usecases/auth/remove_expense.dart';
+import 'features/domain/usecases/auth/save_expense.dart';
+import 'features/domain/usecases/expenses/get_save_expense.dart';
+import 'features/domain/usecases/expenses/remove_expense.dart';
 
 final sl = GetIt.instance;
 
@@ -26,8 +33,21 @@ Future<void> initializeDependencies() async {
   //   () => LocalExpenseBloc(sl(), sl(), sl(), sl()),
   // );
   //UseCases
-  sl.registerSingleton<GetSavedArticleUseCase>(GetSavedArticleUseCase(sl()));
-  sl.registerSingleton<RemoveExpenseUseCase>(RemoveExpenseUseCase(sl()));
-  sl.registerSingleton<EditExpenseUseCase>(EditExpenseUseCase(sl()));
-  sl.registerSingleton<SaveExpenseUseCase>(SaveExpenseUseCase(sl()));
+  // sl.registerSingleton<GetSavedArticleUseCase>(GetSavedArticleUseCase(sl()));
+  // sl.registerSingleton<RemoveExpenseUseCase>(RemoveExpenseUseCase(sl()));
+  // sl.registerSingleton<EditExpenseUseCase>(EditExpenseUseCase(sl()));
+  // sl.registerSingleton<SaveExpenseUseCase>(SaveExpenseUseCase(sl()));
+  //firebase
+  // Firebase Service
+  sl.registerLazySingleton<FirebaseStoreService>(() => FirebaseStoreService());
+
+// Repository
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepoImplFireBase(sl())); // inject FirebaseStoreService
+
+// UseCases
+  sl.registerSingleton<GetSavedAuthUseCase>(GetSavedAuthUseCase(sl()));
+  sl.registerSingleton<SaveAuthUseCase>(SaveAuthUseCase(sl()));
+  sl.registerSingleton<DeleteAuthUseCase>(DeleteAuthUseCase(sl()));
+  sl.registerSingleton<EditAuthUseCase>(EditAuthUseCase(sl()));
+
 }

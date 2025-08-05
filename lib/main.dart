@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
             theme: buildAppTheme(state.theme),
             home: const Login(),
             routes: {
-              dashBoard: (context) => const DashBoard(),
+              // dashBoard: (context) => const DashBoard(),
             },
           );
         },

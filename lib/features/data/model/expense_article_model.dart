@@ -1,7 +1,7 @@
 import '../../domain/entity/expense_article.dart';
 import 'package:floor/floor.dart';
 
-@Entity(tableName: 'expense', primaryKeys: ['time'])
+// @Entity(tableName: 'expense', primaryKeys: ['time'])
 @TypeConverters([DateTimeConverter])
 class ExpenseArticleModel extends ExpenseArticle {
   ExpenseArticleModel({
