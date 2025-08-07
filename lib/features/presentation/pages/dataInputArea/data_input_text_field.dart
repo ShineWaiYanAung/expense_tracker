@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:expense_tracker/features/domain/entity/auth_article.dart';
 import 'package:expense_tracker/features/domain/entity/expense_article.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
 import 'package:expense_tracker/features/presentation/bloc/local_bloc_statement/local_expnese_bloc.dart';
@@ -6,6 +7,9 @@ import 'package:expense_tracker/features/presentation/pages/home/dash_board.dart
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../bloc/firebase_bloc_state_management/fire_base_cubit_state_management.dart';
+import '../../bloc/firebase_bloc_state_management/firebase_cubit_state.dart';
 
 class DataInputTextField extends StatelessWidget {
   final ExpenseType type;
@@ -21,8 +25,17 @@ class DataInputTextField extends StatelessWidget {
     final _formKey = GlobalKey<FormState>();
     final TextEditingController noteController = TextEditingController();
     final TextEditingController costController = TextEditingController();
+     String ownerId = '';
+     CurrencyType currencyName = CurrencyType.uk;
     final TextEditingController currencyNameController =
         TextEditingController();
+    final state = context.read<FirebaseCubit>().state;
+
+    if (state is FirebaseLoginSuccess) {
+      ownerId = state.user.id;
+      currencyName = state.user.currency;
+      print('Owner ID: $ownerId');
+    }
 
     void gatheringAndAdding() {
       final String expenseName = currencyNameController.text;
@@ -34,10 +47,10 @@ class DataInputTextField extends StatelessWidget {
       final ExpenseArticle expenseArticlePerData = ExpenseArticle(
         name: expenseName,
         cost: cost,
-        currencyName: "uk",
+        currencyName: currencyName,
         note: note,
         expenseType: expenseType,
-        time: dateTime,
+        time: dateTime, ownerId: ownerId,
       );
       context.read<LocalExpenseBloc>().add(
         InsertExpense(expenseArticlePerData),

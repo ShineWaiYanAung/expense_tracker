@@ -10,6 +10,8 @@ import 'package:draggable_button_panel/draggable_button_panel.dart';
 import '../../../domain/entity/expense_article.dart';
 import '../../bloc/color_state_mangaement/color_event.dart';
 import '../../bloc/color_state_mangaement/color_state.dart';
+import '../../bloc/firebase_bloc_state_management/fire_base_cubit_state_management.dart';
+import '../../bloc/firebase_bloc_state_management/firebase_cubit_state.dart';
 import '../../bloc/local_bloc_statement/local_expense_state.dart';
 import '../../widget/cardButton/widget_card_button.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,6 +35,20 @@ class _DashBoardState extends State<DashBoard> {
       GlobalKey<DraggableButtonPanelState>();
 
   // Show the draggable button by default
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final state = context.read<FirebaseCubit>().state;
+      if (state is FirebaseLoginSuccess) {
+        final ownerId = state.user.id;
+
+        print('Owner ID: $ownerId');
+
+        context.read<LocalExpenseBloc>().add(GetFilterExpense(ownerId: ownerId));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +186,7 @@ class _DashBoardState extends State<DashBoard> {
                 itemBuilder: (context, index) {
                   final eachData = dataState![index];
                   final key = context.read<LocalExpenseBloc>();
-                  DateTime dateTime = DateTime.parse(
-                    eachData.dateTime.toString(),
-                  );
+                  DateTime dateTime = eachData.time;
                   String formattedDate = DateFormat(
                     'yyyy-MM-dd HH:mm a',
                   ).format(dateTime);
@@ -409,8 +423,6 @@ class _DashBoardState extends State<DashBoard> {
                     context,
                     "\$ ${totalCostForAllTime.toStringAsFixed(1)}",
                   ),
-
-
 
                 ],
               );
@@ -774,18 +786,17 @@ class _DashBoardState extends State<DashBoard> {
                   final String expenseName = _expanseNameController.text;
                   final double cost = double.parse(_costController.text);
                   final String note = _noteController.text;
-                  final DateTime dateTime = DateTime.parse(
-                    articleData.dateTime.toString(),
-                  );
+                  ////
+                  final DateTime dateTime = articleData.time;
                   final ExpenseType expenseType = articleData.expenseType;
 
                   final ExpenseArticle expenseArticlePerData = ExpenseArticle(
                     name: expenseName,
                     cost: cost,
-                    currencyName: "uk",
+                    currencyName: articleData.currencyName,
                     note: note,
                     expenseType: expenseType,
-                    time: dateTime,
+                    time: dateTime, ownerId: '',
                   );
                   context.read<LocalExpenseBloc>().add(
                     EditExpense(expenseArticlePerData),
@@ -796,7 +807,7 @@ class _DashBoardState extends State<DashBoard> {
                   Navigator.of(context).pop();
                 }
               },
-              child: Text("Submit", style: TextStyle(color: Colors.black)),
+              child: Text("Edit", style: TextStyle(color: Colors.black)),
             ),
           ],
         );

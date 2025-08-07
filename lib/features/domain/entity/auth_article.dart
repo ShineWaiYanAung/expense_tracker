@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 enum CurrencyType { uk, japan }
 
 class AuthEntity extends Equatable {
+  final DateTime expireAt;
   final String id;
   final String name;
   final String password;
@@ -11,7 +12,8 @@ class AuthEntity extends Equatable {
   final String country;
   final CurrencyType currency;
 
-  const AuthEntity( {
+  const AuthEntity(  {
+    required this.expireAt,
     required this.id,
     required this.name,
     required this.password,
@@ -21,6 +23,7 @@ class AuthEntity extends Equatable {
     required this.currency,
   });
   AuthEntity copyWith({
+    DateTime? expireAt,
     String? name,
     String? password,
     String? token,
@@ -36,6 +39,7 @@ class AuthEntity extends Equatable {
       isLogin: isLogin ?? this.isLogin,
       country: country ?? this.country,
       currency: currency ?? this.currency, id: id ?? this.id,
+      expireAt: expireAt ?? this.expireAt
 
     );
   }
@@ -48,5 +52,6 @@ class AuthEntity extends Equatable {
     country,
     currency,
     id,
+    expireAt
   ];
 }

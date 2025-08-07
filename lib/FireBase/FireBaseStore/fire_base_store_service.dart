@@ -14,9 +14,11 @@ class FirebaseStoreService {
   }
 
   /// Save new auth entry to Firestore
-  Future<void> saveAuth(AuthModel auth) async {
-    await _authCollection.add(auth.toMap());
+  Future<String> saveAuth(AuthModel auth) async {
+    final docRef = await _authCollection.add(auth.toMap());
+    return docRef.id; // Return the generated Firestore document ID
   }
+
 
   /// Delete an auth entry by document ID
   Future<void> deleteAuth(AuthModel auth) async {

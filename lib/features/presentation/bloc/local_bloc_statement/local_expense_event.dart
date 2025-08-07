@@ -10,6 +10,10 @@ abstract class LocalExpenseEvent extends Equatable{
 class GetSavedExpense extends LocalExpenseEvent{
   const GetSavedExpense();
 }
+class GetFilterExpense extends LocalExpenseEvent{
+  final String ownerId;
+  const GetFilterExpense( {required this.ownerId});
+}
 class RemoveExpense extends LocalExpenseEvent{
   const RemoveExpense(ExpenseArticle expenseArticle) : super(expenseArticle: expenseArticle);
 }

@@ -1,9 +1,10 @@
 import '../../domain/entity/auth_article.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthModel extends AuthEntity {
 
-
   AuthModel({
+    required DateTime expireAt,
     required String id,
     required String name,
     required String password,
@@ -12,6 +13,7 @@ class AuthModel extends AuthEntity {
     required CurrencyType currency,
     required bool isLogin,
   }) : super(
+    expireAt: expireAt,
     id: id,
     name: name,
     password: password,
@@ -22,6 +24,7 @@ class AuthModel extends AuthEntity {
   );
 
   AuthModel copyWith({
+    DateTime? expireAt,
     String? id,
     String? name,
     String? password,
@@ -37,7 +40,7 @@ class AuthModel extends AuthEntity {
       token: token ?? this.token,
       country: country ?? this.country,
       currency: currency ?? this.currency,
-      isLogin: isLogin ?? this.isLogin,
+      isLogin: isLogin ?? this.isLogin, expireAt: expireAt ?? this.expireAt,
     );
   }
 
@@ -61,11 +64,15 @@ class AuthModel extends AuthEntity {
       country: map['country'] ?? '',
       currency: CurrencyType.values.firstWhere(
             (e) => e.name == map['currency'],
-        orElse: () => CurrencyType.uk, // ✅ fallback if value is empty or wrong
+        orElse: () => CurrencyType.uk,
       ),
       isLogin: map['isLogin'] ?? false,
+      expireAt: map['expireAt'] != null
+          ? (map['expireAt'] as Timestamp).toDate()
+          : DateTime.now(), // fallback to now
     );
   }
+
 
 
   factory AuthModel.fromEntity(AuthEntity entity) {
@@ -76,7 +83,7 @@ class AuthModel extends AuthEntity {
       token: entity.token,
       country: entity.country,
       currency: entity.currency,
-      isLogin: entity.isLogin,
+      isLogin: entity.isLogin, expireAt: entity.expireAt,
     );
   }
 }

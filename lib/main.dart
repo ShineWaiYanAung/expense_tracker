@@ -1,9 +1,11 @@
-import 'package:expense_tracker/features/presentation/pages/auth/login.dart';
+import 'package:expense_tracker/features/presentation/bloc/firebase_bloc_state_management/fire_base_cubit_state_management.dart';
+import 'package:expense_tracker/features/presentation/pages/auth/signUp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'features/config/route/route.dart';
 import 'features/config/theme/theme.dart';
+import 'features/domain/repository/auth_repository.dart';
 import 'features/presentation/bloc/color_state_mangaement/color_bloc.dart';
 import 'features/presentation/bloc/color_state_mangaement/color_state.dart';
 import 'features/presentation/bloc/local_bloc_statement/local_expense_event.dart';
@@ -40,27 +42,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MultiBlocProvider(
       providers: [
-        // BlocProvider<LocalExpenseBloc>(
-        //   create: (context) {
-        //     final bloc = sl<LocalExpenseBloc>();
-        //     // Delay the event to avoid blocking main thread
-        //     Future.microtask(() => bloc.add(GetSavedExpense()));
-        //     return bloc;
-        //   },
-        // ),
+        BlocProvider<LocalExpenseBloc>(
+          create: (context) {
+            final bloc = sl<LocalExpenseBloc>();
+            // Delay the event to avoid blocking main thread
+
+            Future.microtask(() => bloc.add(GetSavedExpense()));
+            return bloc;
+          },
+        ),
         BlocProvider<ThemeBloc>(
           create: (_) => ThemeBloc(initialTheme),
         ),
-      ],
+        BlocProvider<FirebaseCubit>(
+          create: (_) => FirebaseCubit(sl<AuthRepository>()),
+        ), ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, state) {
           return MaterialApp(
             title: 'Expense Tracker',
             debugShowCheckedModeBanner: false,
             theme: buildAppTheme(state.theme),
-            home: const Login(),
+            home: const SignUp(),
             routes: {
               // dashBoard: (context) => const DashBoard(),
             },

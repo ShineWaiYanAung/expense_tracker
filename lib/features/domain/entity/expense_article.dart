@@ -1,65 +1,58 @@
 import 'package:equatable/equatable.dart';
+import 'package:expense_tracker/features/domain/entity/auth_article.dart';
 import 'package:floor/floor.dart';
+
 enum ExpenseType {
-   bill,
-   food,
-   transport
+  bill,
+  food,
+  transport
 }
-@TypeConverters([DateTimeConverter]) // Apply the converter
-@Entity(tableName: 'expenses')
+
+// @TypeConverters([DateTimeConverter])
 class ExpenseArticle extends Equatable {
   @PrimaryKey(autoGenerate: true)
-  final ExpenseType expenseType;
-  final int? id; // Add ID as a primary key
+  final String? id; // Primary key
   final String name;
   final double cost;
-  final String currencyName;
+  final CurrencyType currencyName;
   final String note;
-  //final double quantity;
- // final double netPrice;
+  final String ownerId;
+  final DateTime time; // Proper DateTime type
+  final ExpenseType expenseType;
 
-  @ColumnInfo(name: 'time')
-  final int time; // Store DateTime as int (timestamp)
-
-  ExpenseArticle( {
-
+  ExpenseArticle({
+    required this.ownerId,
     this.id,
     required this.note,
-    required DateTime time, // Accept DateTime
+    required this.time, // keep DateTime type
     required this.name,
     required this.cost,
     required this.currencyName,
-    //required this.quantity,
-  //  required this.netPrice,
     required this.expenseType,
-  }) : time = time.millisecondsSinceEpoch; // Convert DateTime to int
-
-  /// Convert back to DateTime when needed
-  DateTime get dateTime => DateTime.fromMillisecondsSinceEpoch(time);
+  });
 
   @override
   List<Object?> get props => [
     id,
     note,
-    dateTime, // Use the getter to return DateTime
+    time,
     name,
     cost,
     currencyName,
- //   quantity,
- //   netPrice,
-    expenseType
+    ownerId,
+    expenseType,
   ];
 }
 
-
-class DateTimeConverter extends TypeConverter<DateTime, int> {
-  @override
-  DateTime decode(int databaseValue) {
-    return DateTime.fromMillisecondsSinceEpoch(databaseValue);
-  }
-
-  @override
-  int encode(DateTime value) {
-    return value.millisecondsSinceEpoch;
-  }
-}
+/// Used for Floor DB to convert DateTime <-> int (timestamp)
+// class DateTimeConverter extends TypeConverter<DateTime, int> {
+//   @override
+//   DateTime decode(int databaseValue) {
+//     return DateTime.fromMillisecondsSinceEpoch(databaseValue);
+//   }
+//
+//   @override
+//   int encode(DateTime value) {
+//     return value.millisecondsSinceEpoch;
+//   }
+// }

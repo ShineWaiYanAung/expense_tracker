@@ -1,21 +1,25 @@
-import 'package:expense_tracker/features/presentation/pages/auth/signUp.dart';
-import 'package:expense_tracker/features/presentation/pages/home/dash_board.dart';
+import 'package:expense_tracker/features/presentation/pages/auth/login.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/firebase_bloc_state_management/fire_base_cubit_state_management.dart';
-import 'package:lottie/lottie.dart';
-
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUp extends StatefulWidget {
+  const SignUp({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUp> createState() => _SignUpState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _tokenController = TextEditingController();
+
+  String? _selectedCountry;
+
+  final List<String> countries = ['UK', 'Japan'];
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +46,10 @@ class _LoginPageState extends State<LoginPage> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(child: Lottie.asset("lottie/cute_bear.json")),
-                    const SizedBox(height: 32),
+                    SizedBox(
+                      child: Lottie.asset("lottie/cute_bear.json"),
+                    ),
                     buildTextFormField(
                       Icons.person,
                       _usernameController,
@@ -58,49 +62,62 @@ class _LoginPageState extends State<LoginPage> {
                       context,
                       label: "Password",
                     ),
-                    const SizedBox(height: 24),
+                    buildCountryDropdown(context),
+                    buildTextFormField(
+                      Icons.vpn_key,
+                      _tokenController,
+                      context,
+                      label: "Token",
+                    ),
+                    const SizedBox(height: 30),
                     ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           final username = _usernameController.text.trim();
                           final password = _passwordController.text.trim();
+                          final token = _tokenController.text.trim();
+                          final country = _selectedCountry ?? '';
 
-                          context.read<FirebaseCubit>().login(
+                          context.read<FirebaseCubit>().signUp(
                             username: username,
                             password: password,
-                            onFailure: (msg) {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(msg)));
-                            },
-                            onSuccess: (msg) {
-                              ScaffoldMessenger.of(
-                                context,
-                              ).showSnackBar(SnackBar(content: Text(msg)));
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(builder: (context) => const DashBoard()),
+                            token: token,
+                            country: country,
+                            onFailure: (message) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(message)),
                               );
+                            },
+                            onSuccess: (message) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(message)),
+                              );
+
+                              // Optionally navigate to the next screen here
                             },
                           );
                         }
                       },
-                      child: const Text("Login"),
+                      child: const Text("Sign Up"),
                     ),
+
+
                     const SizedBox(height: 16),
+
+                    // Sign-up navigation
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Doesn't have an account ?",
+                          "Have an account ?",
                           style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUp(),));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginPage(),));
                           },
                           child: const Text(
-                            "Sign Up",
+                            "Login",
                             style: TextStyle( color : Colors.white,fontWeight: FontWeight.bold,),
                           ),
                         ),
@@ -118,11 +135,11 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget buildTextFormField(
-    IconData iconData,
-    TextEditingController controller,
-    BuildContext context, {
-    required String label,
-  }) {
+      IconData iconData,
+      TextEditingController controller,
+      BuildContext context, {
+        required String label,
+      }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: TextFormField(
@@ -132,9 +149,11 @@ class _LoginPageState extends State<LoginPage> {
           hintText: label,
           filled: true,
           fillColor: Theme.of(context).scaffoldBackgroundColor,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
         ),
-        obscureText: label == "Password",
+        obscureText: label == "Password", // hide password
         validator: (value) {
           if (value == null || value.isEmpty) {
             return "Please enter $label";
@@ -144,4 +163,35 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  Widget buildCountryDropdown(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: DropdownButtonFormField<String>(
+        value: _selectedCountry,
+        decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.flag),
+          hintText: "Select Country",
+          filled: true,
+          fillColor: Theme.of(context).scaffoldBackgroundColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        items: countries.map((country) {
+          return DropdownMenuItem<String>(
+            value: country,
+            child: Text(country,style: TextStyle(color: Colors.black),),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            _selectedCountry = value;
+          });
+        },
+        validator: (value) => value == null ? "Please select a country" : null,
+      ),
+    );
+  }
 }
+
